@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful — MedSimple AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f2d6e 0%, #2563eb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+        }
+        .tick {
+            width: 80px; height: 80px;
+            background: #d1fae5;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+        h1 { font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem; }
+        .subtitle { color: #64748b; font-size: 1rem; margin-bottom: 2rem; }
+        .steps {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .steps-title { font-weight: 700; font-size: 0.9rem; color: #64748b; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .step-item {
+            display: flex; align-items: flex-start; gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .step-item:last-child { margin-bottom: 0; }
+        .step-dot {
+            width: 28px; height: 28px; min-width: 28px;
+            background: #2563eb; color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: 700;
+        }
+        .step-text { font-size: 0.93rem; color: #334155; padding-top: 0.3rem; }
+        .step-text strong { color: #0f172a; }
+        .wa-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            background: #25d366;
+            color: white;
+            padding: 1.1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+            margin-bottom: 1rem;
+        }
+        .wa-btn:hover { background: #1ebe5d; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(37,211,102,0.4); }
+        .wa-btn i { font-size: 1.4rem; }
+        .note { font-size: 0.82rem; color: #94a3b8; margin-bottom: 1.5rem; }
+        .plan-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .divider { height: 1px; background: #e2e8f0; margin: 1.5rem 0; }
+        .help { font-size: 0.85rem; color: #64748b; }
+        .help a { color: #2563eb; text-decoration: none; font-weight: 600; }
+        .lang-note {
+            background: #fefce8;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 0.9rem 1rem;
+            font-size: 0.85rem;
+            color: #92400e;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .lang-note strong { color: #78350f; }
+        @media (max-width: 480px) {
+            .card { padding: 2rem 1.5rem; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="tick">✅</div>
+    <h1>Payment Successful!</h1>
+    <p class="subtitle">Welcome to MedSimple AI. You're all set.</p>
+    <div class="plan-badge" id="plan-badge">✨ Your plan is active</div>
+    <div class="lang-note">
+        <strong>🌐 8 languages available:</strong> When you open WhatsApp, we'll ask you to choose your preferred language — English, हिंदी, العربية, Español, Français, Deutsch, Русский, or Italiano.
+    </div>
+    <div class="steps">
+        <div class="steps-title">What happens next</div>
+        <div class="step-item">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>Click the button below</strong> to open WhatsApp. A message is pre-filled for you.</div>
+        </div>
+        <div class="step-item">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Just tap Send</strong> — our bot will reply in seconds asking your language.</div>
+        </div>
+        <div class="step-item">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Choose your language</strong>, then send your medical report photo or PDF.</div>
+        </div>
+        <div class="step-item">
+            <div class="step-dot">4</div>
+            <div class="step-text"><strong>Get your explanation</strong> in under 5 minutes — in your language. 🎉</div>
+        </div>
+    </div>
+    <a href="https://wa.me/YOUR_WHATSAPP_NUMBER?text=Hi!%20I%20just%20paid%20for%20MedSimple%20AI.%20Please%20activate%20my%20account."
+       class="wa-btn" id="wa-link" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        Open WhatsApp Now
+    </a>
+    <p class="note">
+        📱 On mobile: WhatsApp opens automatically.<br>
+        💻 On desktop: WhatsApp Web opens in a new tab.
+    </p>
+    <div class="divider"></div>
+    <p class="help">
+        Having trouble? Email us at
+        <a href="mailto:support@medsimpleai.com">support@medsimpleai.com</a>
+        <br><br>
+        <a href="index.html">← Back to MedSimple AI</a>
+    </p>
+</div>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan') || '';
+    const badge = document.getElementById('plan-badge');
+    const waLink = document.getElementById('wa-link');
+    const plans = {
+        single:  { label: '✨ Single Report — Active',    msg: 'Hi! I just paid for MedSimple AI Single Report. Please activate my account.' },
+        monthly: { label: '⭐ Monthly Unlimited — Active', msg: 'Hi! I just paid for MedSimple AI Monthly Unlimited. Please activate my account.' },
+        family:  { label: '👨‍👩‍👧 Family Pack — Active',      msg: 'Hi! I just paid for MedSimple AI Family Pack. Please activate my account.' },
+    };
+    if (plans[plan]) {
+        badge.textContent = plans[plan].label;
+        const base = 'https://wa.me/YOUR_WHATSAPP_NUMBER?text=';
+        waLink.href = base + encodeURIComponent(plans[plan].msg);
+    }
+</script>
+</body>
+</html>
