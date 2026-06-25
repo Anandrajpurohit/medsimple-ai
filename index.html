@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSimple AI - Understand Your Medical Reports in Minutes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; color: var(--dark); background: var(--white); line-height: 1.6; }
+
+        /* NAV */
+        nav {
+            position: fixed; top: 0; width: 100%;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: var(--shadow);
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+        .logo span { color: var(--secondary); }
+        .nav-cta {
+            background: var(--primary); color: white;
+            padding: 0.6rem 1.5rem; border-radius: 50px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        .nav-cta:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f2d6e 0%, #2563eb 55%, #0891b2 100%);
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 6rem 2rem 4rem;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.07) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 50%);
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 820px; }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.18);
+            color: white; padding: 0.45rem 1.3rem;
+            border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+            margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 800; color: white; line-height: 1.15; margin-bottom: 1.2rem;
+        }
+        .hero h1 span { color: #fcd34d; }
+        .hero-sub {
+            font-size: 1.15rem; color: rgba(255,255,255,0.88);
+            max-width: 580px; margin: 0 auto 2.5rem;
+        }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-white {
+            background: white; color: var(--primary);
+            padding: 1rem 2.2rem; border-radius: 50px;
+            font-weight: 700; font-size: 1rem; text-decoration: none;
+            transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .btn-white:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+        .btn-wa {
+            background: #25d366; color: white;
+            padding: 1rem 2.2rem; border-radius: 50px;
+            font-weight: 700; font-size: 1rem; text-decoration: none;
+            transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .btn-wa:hover { transform: translateY(-3px); background: #1ebe5d; }
+        .hero-stats {
+            display: flex; gap: 2.5rem; justify-content: center;
+            margin-top: 3.5rem; flex-wrap: wrap;
+        }
+        .stat { text-align: center; color: white; }
+        .stat-num { font-size: 2rem; font-weight: 800; color: #fcd34d; line-height: 1; }
+        .stat-label { font-size: 0.8rem; opacity: 0.85; margin-top: 0.2rem; }
+
+        /* SECTIONS */
+        section { padding: 5rem 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 0.8rem; }
+        .section-sub { text-align: center; color: var(--gray); font-size: 1.05rem; max-width: 580px; margin: 0 auto 3rem; }
+
+        /* HOW IT WORKS */
+        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem; }
+        .step {
+            text-align: center; padding: 2rem 1.5rem;
+            border-radius: 20px; background: var(--light);
+            position: relative; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .step:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+        .step-num {
+            position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white;
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+        }
+        .step-icon {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, var(--primary), #0891b2);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.2rem; font-size: 1.7rem; color: white;
+        }
+        .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .step p { color: var(--gray); font-size: 0.92rem; }
+
+        /* REPORTS GRID */
+        .reports-bg { background: var(--light); }
+        .reports-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; }
+        .report-card {
+            background: white; border: 2px solid #e2e8f0;
+            border-radius: 16px; padding: 1.4rem;
+            text-align: center; transition: all 0.3s;
+        }
+        .report-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .report-card i { font-size: 2.2rem; color: var(--primary); margin-bottom: 0.8rem; display: block; }
+        .report-card h3 { font-size: 0.95rem; font-weight: 700; }
+        .report-card p { color: var(--gray); font-size: 0.82rem; margin-top: 0.3rem; }
+
+        /* PRICING */
+        .pricing-bg { background: white; }
+        .pricing-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem; max-width: 1000px; margin: 0 auto; align-items: start;
+        }
+        .pricing-card {
+            background: white; border-radius: 24px;
+            padding: 2.5rem 2rem; box-shadow: var(--shadow);
+            border: 2px solid #e2e8f0; position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .pricing-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+        .pricing-card.popular {
+            border: 3px solid var(--primary); transform: scale(1.04);
+            box-shadow: 0 20px 40px rgba(37,99,235,0.18);
+        }
+        .pricing-card.popular:hover { transform: scale(1.04) translateY(-6px); }
+        .popular-badge {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white;
+            padding: 0.3rem 1.4rem; border-radius: 50px;
+            font-size: 0.78rem; font-weight: 700; white-space: nowrap;
+        }
+        .plan-name { font-size: 1rem; font-weight: 700; color: var(--gray); margin-bottom: 0.5rem; }
+        .plan-price { font-size: 2.8rem; font-weight: 800; color: var(--dark); line-height: 1; }
+        .plan-usd { font-size: 0.9rem; color: var(--gray); margin-bottom: 0.5rem; }
+        .plan-desc { color: var(--gray); font-size: 0.88rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; }
+        .plan-features { list-style: none; margin-bottom: 2rem; }
+        .plan-features li {
+            padding: 0.35rem 0; font-size: 0.92rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .plan-features li i { color: var(--secondary); font-size: 0.85rem; }
+        .btn-plan {
+            width: 100%; padding: 0.9rem; border-radius: 50px;
+            font-weight: 700; font-size: 0.97rem; text-align: center;
+            text-decoration: none; display: block; transition: all 0.3s;
+            cursor: pointer; border: none;
+        }
+        .btn-filled { background: var(--primary); color: white; }
+        .btn-filled:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+
+        /* COUNTRIES */
+        .countries { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 2rem; }
+        .ctag {
+            background: white; border: 2px solid #e2e8f0;
+            padding: 0.45rem 1.1rem; border-radius: 50px;
+            font-weight: 600; font-size: 0.88rem;
+            display: flex; align-items: center; gap: 0.4rem;
+            transition: all 0.2s;
+        }
+        .ctag:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* FAQ */
+        .faq-item { background: var(--light); border-radius: 12px; margin-bottom: 0.8rem; overflow: hidden; }
+        .faq-q {
+            padding: 1.1rem 1.5rem; font-weight: 600; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.97rem;
+        }
+        .faq-q i { transition: transform 0.3s; color: var(--gray); }
+        .faq-a { padding: 0 1.5rem; color: var(--gray); font-size: 0.93rem; max-height: 0; overflow: hidden; transition: all 0.3s; }
+        .faq-a.open { padding: 0 1.5rem 1.2rem; max-height: 200px; }
+
+        /* CTA BAND */
+        .cta-band {
+            background: linear-gradient(135deg, #0f2d6e, #2563eb);
+            text-align: center; padding: 5rem 2rem;
+        }
+        .cta-band h2 { color: white; font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; margin-bottom: 1rem; }
+        .cta-band p { color: rgba(255,255,255,0.88); font-size: 1.05rem; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+        /* FOOTER */
+        footer { background: var(--dark); color: rgba(255,255,255,0.75); padding: 3rem 2rem; text-align: center; }
+        .footer-logo { font-size: 1.6rem; font-weight: 800; color: white; margin-bottom: 0.8rem; }
+        .footer-logo span { color: var(--secondary); }
+        .disclaimer {
+            background: #1e293b; border-left: 4px solid #f59e0b;
+            padding: 1rem 1.5rem; border-radius: 8px;
+            font-size: 0.83rem; color: rgba(255,255,255,0.65);
+            max-width: 700px; margin: 1.5rem auto; text-align: left; line-height: 1.6;
+        }
+
+        /* FLOATING WHATSAPP */
+        .wa-float {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #25d366; color: white;
+            width: 58px; height: 58px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.7rem; text-decoration: none;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+            z-index: 999; transition: all 0.3s;
+            animation: wapulse 2.5s infinite;
+        }
+        .wa-float:hover { transform: scale(1.12); background: #1ebe5d; }
+        @keyframes wapulse {
+            0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.45); }
+            70% { box-shadow: 0 0 0 16px rgba(37,211,102,0); }
+            100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+        }
+
+        /* TRUST BAR */
+        .trust-bar {
+            background: #f0fdf4; border-top: 1px solid #d1fae5; border-bottom: 1px solid #d1fae5;
+            padding: 1.2rem 2rem;
+            display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+        }
+        .trust-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 600; color: #065f46; }
+
+        /* LANGUAGE SECTION */
+        .lang-section { background: linear-gradient(135deg, #0f172a, #1e3a8a); padding: 5rem 2rem; }
+        .lang-section .section-title { color: white; }
+        .lang-section .section-sub { color: rgba(255,255,255,0.75); }
+        .lang-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; max-width: 1100px; margin: 0 auto; }
+        .lang-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.13);
+            border-radius: 18px; padding: 1.6rem 1.2rem;
+            text-align: center; transition: all 0.3s; cursor: default;
+        }
+        .lang-card:hover { background: rgba(255,255,255,0.14); transform: translateY(-4px); border-color: rgba(255,255,255,0.3); }
+        .lang-flag { font-size: 2.6rem; margin-bottom: 0.6rem; }
+        .lang-name { font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 0.2rem; }
+        .lang-native { font-size: 0.95rem; color: #fcd34d; margin-bottom: 0.6rem; font-weight: 600; }
+        .lang-reach { font-size: 0.78rem; color: rgba(255,255,255,0.55); }
+        .lang-num { display: inline-block; background: rgba(255,255,255,0.15); color: #fcd34d; font-weight: 700; font-size: 0.8rem; padding: 0.2rem 0.6rem; border-radius: 50px; margin-bottom: 0.5rem; }
+
+        /* ── ANIMATED DEMO SECTION ── */
+        .demo-section {
+            background: linear-gradient(180deg, #fff 0%, #f0f7ff 100%);
+            padding: 5rem 2rem;
+        }
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .demo-left h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 800; margin-bottom: 1rem; }
+        .demo-left p  { color: var(--gray); font-size: 1rem; line-height: 1.75; margin-bottom: 1.5rem; }
+        .demo-bullet { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.9rem; }
+        .demo-bullet-icon { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; background: linear-gradient(135deg,#2563eb,#10b981); display:flex;align-items:center;justify-content:center; font-size:1rem; }
+        .demo-bullet-text strong { display:block; font-size:0.95rem; color:var(--dark); }
+        .demo-bullet-text span { font-size:0.85rem; color:var(--gray); }
+
+        /* Phone Mockup */
+        .phone-wrap { display:flex; justify-content:center; }
+        .phone {
+            width: 300px;
+            background: #0f172a;
+            border-radius: 40px;
+            padding: 14px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .phone-notch { width: 90px; height: 22px; background: #0f172a; border-radius: 0 0 14px 14px; margin: 0 auto 6px; position:relative; z-index:2; }
+        .phone-screen {
+            background: #e5ddd5;
+            border-radius: 28px;
+            overflow: hidden;
+            height: 540px;
+            display: flex;
+            flex-direction: column;
+        }
+        .wa-header {
+            background: #075e54;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .wa-avatar { width: 36px; height: 36px; background: #25d366; border-radius: 50%; display:flex;align-items:center;justify-content:center; font-size:1.1rem; }
+        .wa-name { color:white; font-size:0.88rem; font-weight:700; line-height:1; }
+        .wa-status { color:rgba(255,255,255,0.7); font-size:0.72rem; }
+        .wa-body { flex:1; overflow-y:auto; padding:0.8rem; display:flex; flex-direction:column; gap:0.5rem; }
+        .wa-body::-webkit-scrollbar { display:none; }
+        .msg {
+            max-width: 82%;
+            padding: 0.5rem 0.7rem;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            line-height: 1.45;
+            animation: msgIn 0.35s cubic-bezier(0.18,0.89,0.32,1.28) both;
+        }
+        @keyframes msgIn {
+            from { opacity:0; transform: scale(0.8) translateY(8px); }
+            to   { opacity:1; transform: scale(1) translateY(0); }
+        }
+        .msg-bot { background:white; border-radius:0 10px 10px 10px; align-self:flex-start; color:#111; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+        .msg-user { background:#dcf8c6; border-radius:10px 0 10px 10px; align-self:flex-end; color:#111; }
+        .msg-img { background:white; border-radius:0 10px 10px 10px; align-self:flex-start; display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.7rem; box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+        .msg-img-icon { font-size:1.6rem; }
+        .msg-img-text { font-size:0.72rem; color:#555; }
+        .typing-indicator {
+            background: white;
+            border-radius: 0 10px 10px 10px;
+            align-self: flex-start;
+            padding: 0.55rem 0.8rem;
+            box-shadow:0 1px 2px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .typing-dots { display:flex; gap:4px; align-items:center; }
+        .typing-dots span {
+            width: 7px; height: 7px;
+            background: #aaa;
+            border-radius: 50%;
+            animation: bounce 1.2s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay:0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay:0.4s; }
+        @keyframes bounce {
+            0%,60%,100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        .msg-time { font-size:0.62rem; color:#999; text-align:right; margin-top:2px; }
+        .msg-highlight { color:#075e54; font-weight:700; }
+        .msg-red { color:#dc2626; font-weight:700; }
+        .msg-orange { color:#d97706; font-weight:700; }
+        .msg-green { color:#059669; font-weight:700; }
+        /* Demo tabs */
+        .demo-tab {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 50px;
+            padding: 0.6rem 1.4rem;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray);
+            font-family: 'Inter', sans-serif;
+        }
+        .demo-tab:hover  { border-color: var(--primary); color: var(--primary); }
+        .demo-tab.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+        /* ── BEFORE/AFTER ── */
+        .before-after {
+            background: white;
+            padding: 5rem 2rem;
+        }
+        .ba-grid {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:2rem;
+            max-width:900px;
+            margin:2.5rem auto 0;
+        }
+        .ba-card {
+            border-radius:20px;
+            padding:2rem;
+        }
+        .ba-before {
+            background:#fef2f2;
+            border:2px solid #fecaca;
+        }
+        .ba-after {
+            background:#f0fdf4;
+            border:2px solid #bbf7d0;
+        }
+        .ba-tag {
+            display:inline-block;
+            padding:0.25rem 0.9rem;
+            border-radius:50px;
+            font-size:0.78rem;
+            font-weight:700;
+            margin-bottom:1rem;
+        }
+        .ba-before .ba-tag { background:#fecaca; color:#991b1b; }
+        .ba-after  .ba-tag { background:#bbf7d0; color:#065f46; }
+        .ba-card h3 { font-size:1.05rem; font-weight:700; margin-bottom:0.8rem; }
+        .ba-before h3 { color:#991b1b; }
+        .ba-after  h3 { color:#065f46; }
+        .ba-list { list-style:none; }
+        .ba-list li { font-size:0.9rem; padding:0.35rem 0; display:flex; gap:0.6rem; align-items:flex-start; color:#374151; }
+        .ba-before .ba-list li::before { content:'😰'; }
+        .ba-after  .ba-list li::before { content:'✅'; }
+
+        /* ── IMPACT COUNTERS ── */
+        .impact-section {
+            background: linear-gradient(135deg, #0f2d6e 0%, #1e40af 100%);
+            padding: 4rem 2rem;
+        }
+        .impact-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:2rem;
+            max-width:900px;
+            margin:0 auto;
+            text-align:center;
+        }
+        .impact-item { color:white; }
+        .impact-num {
+            font-size:2.8rem;
+            font-weight:800;
+            color:#fcd34d;
+            line-height:1;
+            font-variant-numeric:tabular-nums;
+        }
+        .impact-label { font-size:0.88rem; opacity:0.8; margin-top:0.4rem; }
+        .impact-icon { font-size:1.8rem; margin-bottom:0.4rem; }
+
+        @media (max-width:768px) {
+            .demo-layout { grid-template-columns:1fr; gap:2.5rem; }
+            .phone { width:270px; }
+            .phone-screen { height:480px; }
+            .ba-grid { grid-template-columns:1fr; }
+            .pricing-card.popular { transform: scale(1); }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .hero-stats { gap: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="logo">Med<span>Simple</span> AI</div>
+    <a href="#pricing" class="nav-cta">Get Started →</a>
+</nav>
+
+<!-- COUNTRY BANNER -->
+<div id="country-banner" style="background:#1e40af;color:rgba(255,255,255,0.9);text-align:center;padding:0.5rem;font-size:0.82rem;margin-top:64px;"></div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Your Medical Report,<br><span>Explained in Your Language — In Detail</span></h1>
+        <p class="hero-sub">Send your report on WhatsApp. Get a clear, simple explanation in under 5 minutes. No app downloads. No confusion. No jargon.</p>
+        <div class="hero-buttons">
+            <a href="#pricing" class="btn-white">See Pricing — Start from ₹49</a>
+            <a href="https://wa.me/YOUR_WHATSAPP_NUMBER" class="btn-wa" target="_blank">
+                <i class="fab fa-whatsapp"></i> WhatsApp Us Now
+            </a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat">
+                <div class="stat-num">&lt;5 min</div>
+                <div class="stat-label">Response time</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" id="hero-price">₹49</div>
+                <div class="stat-label">Starting price</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">18+</div>
+                <div class="stat-label">Report types</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">12+</div>
+                <div class="stat-label">Countries served</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+    <div class="trust-item"><i class="fas fa-lock"></i> 100% Private & Secure</div>
+    <div class="trust-item"><i class="fas fa-trash"></i> Reports Deleted After Explanation</div>
+    <div class="trust-item"><i class="fab fa-whatsapp"></i> Works on WhatsApp</div>
+    <div class="trust-item"><i class="fas fa-language"></i> 8 Languages Supported</div>
+    <div class="trust-item"><i class="fas fa-globe"></i> India · UAE · Saudi Arabia · Qatar · Kuwait · UK · Pakistan · Bangladesh · Germany · France · Spain · Italy · Nigeria · Kenya · Canada · Australia</div>
+</div>
+
+<!-- ── ANIMATED DEMO ── -->
+<section class="demo-section">
+    <div class="container" style="max-width:1200px;">
+        <h2 class="section-title">See Exactly What You Get — <span style="color:var(--primary)">Before You Pay</span></h2>
+        <p class="section-sub">Real conversations. Real report explanations. Choose a report type and watch what your family will receive on WhatsApp in under 5 minutes.</p>
+
+        <!-- Report Type Tabs -->
+        <div style="display:flex;justify-content:center;gap:0.8rem;flex-wrap:wrap;margin-bottom:3rem;">
+            <button class="demo-tab active" onclick="switchDemo('blood')" id="tab-blood">🩸 Blood Test (CBC)</button>
+            <button class="demo-tab" onclick="switchDemo('thyroid')" id="tab-thyroid">🦋 Thyroid Report</button>
+            <button class="demo-tab" onclick="switchDemo('diabetes')" id="tab-diabetes">🍬 Diabetes (HbA1c)</button>
+            <button class="demo-tab" onclick="switchDemo('kidney')" id="tab-kidney">🫘 Kidney Function</button>
+        </div>
+
+        <div class="demo-layout">
+
+            <!-- Left: Detail bullets (change per tab) -->
+            <div class="demo-left">
+                <div id="demo-desc">
+                    <h3 style="font-size:1.3rem;font-weight:800;margin-bottom:0.8rem;color:var(--dark)">🩸 Complete Blood Count (CBC)</h3>
+                    <p style="color:var(--gray);margin-bottom:1.4rem;font-size:0.95rem;">The most common test ordered by doctors. Checks your blood cells — whether you have anaemia, infection, or clotting issues.</p>
+                </div>
+                <div class="demo-bullet">
+                    <div class="demo-bullet-icon">📋</div>
+                    <div class="demo-bullet-text">
+                        <strong>Every single value explained</strong>
+                        <span>Hemoglobin, WBC, RBC, Platelets, MCV, MCH, Neutrophils, Lymphocytes — all of it, in plain words</span>
+                    </div>
+                </div>
+                <div class="demo-bullet">
+                    <div class="demo-bullet-icon">🔴</div>
+                    <div class="demo-bullet-text">
+                        <strong>Colour-coded status for each value</strong>
+                        <span>✅ Normal &nbsp;⚠️ Borderline &nbsp;🔴 Needs attention — so you know at a glance what matters</span>
+                    </div>
+                </div>
+                <div class="demo-bullet">
+                    <div class="demo-bullet-icon">👨‍⚕️</div>
+                    <div class="demo-bullet-text">
+                        <strong>3 questions prepared for your doctor</strong>
+                        <span>Specific to YOUR report. Walk in confident, not confused</span>
+                    </div>
+                </div>
+                <div class="demo-bullet">
+                    <div class="demo-bullet-icon">🌍</div>
+                    <div class="demo-bullet-text">
+                        <strong>Delivered in YOUR language</strong>
+                        <span>Hindi, Arabic, Spanish, French, German, Italian, Russian or English — you choose</span>
+                    </div>
+                </div>
+                <div class="demo-bullet">
+                    <div class="demo-bullet-icon">⏱️</div>
+                    <div class="demo-bullet-text">
+                        <strong>Under 5 minutes. On WhatsApp.</strong>
+                        <span>No app. No login. Just send the photo and get your answer</span>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:1.5rem;">
+                    <button onclick="restartCurrentDemo()" style="background:var(--primary);color:white;border:none;border-radius:50px;padding:0.7rem 1.5rem;font-size:0.9rem;font-weight:700;cursor:pointer;">▶ Replay</button>
+                    <a href="#pricing" style="background:#10b981;color:white;border:none;border-radius:50px;padding:0.7rem 1.5rem;font-size:0.9rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;">Get Started ₹49 →</a>
+                </div>
+            </div>
+
+            <!-- Right: Phone Mockup -->
+            <div class="phone-wrap">
+                <div class="phone">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="wa-header">
+                            <div class="wa-avatar">🤖</div>
+                            <div>
+                                <div class="wa-name">MedSimple AI</div>
+                                <div class="wa-status" id="wa-status">online</div>
+                            </div>
+                        </div>
+                        <div class="wa-body" id="wa-body">
+                            <!-- Messages injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background:var(--light);">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-sub">3 simple steps. No app to download. No account to create. Just WhatsApp.</p>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                <h3>Pay Securely</h3>
+                <p>Choose your plan. Pay via UPI, credit card, or PayPal. Takes 30 seconds. India: Razorpay. International: PayPal (no account needed).</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-icon"><i class="fab fa-whatsapp"></i></div>
+                <h3>Open WhatsApp</h3>
+                <p>You're redirected to our WhatsApp instantly. Choose your language — Hindi, Arabic, English, Spanish or 4 more.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-icon"><i class="fas fa-camera"></i></div>
+                <h3>Send Your Report Photo</h3>
+                <p>Take a clear photo of your report or send the PDF. Our AI reads it completely.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                <h3>Get Full Explanation</h3>
+                <p>In under 5 minutes, every value is explained simply. Abnormal values flagged. Doctor questions prepared. In YOUR language.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── BEFORE / AFTER ── -->
+<section class="before-after">
+    <div class="container" style="max-width:960px;">
+        <h2 class="section-title">The Difference MedSimple AI Makes</h2>
+        <p class="section-sub">This is what happens when you get your report — with and without us.</p>
+        <div class="ba-grid">
+            <div class="ba-card ba-before">
+                <div class="ba-tag">❌ Without MedSimple AI</div>
+                <h3>Confused & Worried</h3>
+                <ul class="ba-list">
+                    <li>You see "HbA1c: 8.2%" and have no idea if that's good or bad</li>
+                    <li>You Google it and get 10 different scary answers</li>
+                    <li>You panic, lose sleep, call relatives for help</li>
+                    <li>Doctor's appointment is 5 days away — you wait anxiously</li>
+                    <li>You walk in not knowing what to ask</li>
+                    <li>Doctor explains in 2 minutes and you still don't understand</li>
+                </ul>
+            </div>
+            <div class="ba-card ba-after">
+                <div class="ba-tag">✅ With MedSimple AI</div>
+                <h3>Clear & Empowered</h3>
+                <ul class="ba-list">
+                    <li>You send your report photo on WhatsApp</li>
+                    <li>In 4 minutes you know: "HbA1c 8.2% means your blood sugar has been high for 3 months"</li>
+                    <li>You know exactly which values are concerning and which are fine</li>
+                    <li>You sleep with clarity instead of fear</li>
+                    <li>You walk into the appointment with 3 specific questions ready</li>
+                    <li>You actually understand your own health</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── IMPACT COUNTERS ── -->
+<section class="impact-section">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+        <h2 style="color:white;font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;">Our Mission: Health Clarity for Everyone</h2>
+        <p style="color:rgba(255,255,255,0.75);font-size:1rem;margin-top:0.5rem;">Every family deserves to understand their health — regardless of language, income, or location.</p>
+    </div>
+    <div class="impact-grid">
+        <div class="impact-item">
+            <div class="impact-icon">🩺</div>
+            <div class="impact-num"><span class="counter" data-target="18">0</span>+</div>
+            <div class="impact-label">Report types explained</div>
+        </div>
+        <div class="impact-item">
+            <div class="impact-icon">🌐</div>
+            <div class="impact-num"><span class="counter" data-target="8">0</span></div>
+            <div class="impact-label">Languages available</div>
+        </div>
+        <div class="impact-item">
+            <div class="impact-icon">⏱️</div>
+            <div class="impact-num">&lt;<span class="counter" data-target="5">0</span></div>
+            <div class="impact-label">Minutes per explanation</div>
+        </div>
+        <div class="impact-item">
+            <div class="impact-icon">🌍</div>
+            <div class="impact-num"><span class="counter" data-target="12">0</span>+</div>
+            <div class="impact-label">Countries served</div>
+        </div>
+        <div class="impact-item">
+            <div class="impact-icon">💰</div>
+            <div class="impact-num">₹<span class="counter" data-target="49">0</span></div>
+            <div class="impact-label">Starting price — less than a cup of chai</div>
+        </div>
+    </div>
+</section>
+
+<!-- REPORTS WE HANDLE -->
+<section class="reports-bg">
+    <div class="container">
+        <h2 class="section-title">Reports We Explain</h2>
+        <p class="section-sub">From blood tests to discharge summaries — we make every report clear and understandable.</p>
+        <div class="reports-grid">
+            <div class="report-card">
+                <i class="fas fa-tint"></i>
+                <h3>Blood Test (CBC)</h3>
+                <p>Hemoglobin, WBC, RBC, Platelets & all values</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-heartbeat"></i>
+                <h3>Heart & Cholesterol</h3>
+                <p>Lipid profile, ECG, Echo reports</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-x-ray"></i>
+                <h3>X-Ray & MRI / CT</h3>
+                <p>Radiology text reports explained simply</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-pills"></i>
+                <h3>Prescription</h3>
+                <p>What each medicine does & side effects</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-kidneys"></i>
+                <h3>Liver Function (LFT)</h3>
+                <p>ALT, AST, bilirubin, albumin & more</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-filter"></i>
+                <h3>Kidney Function (KFT)</h3>
+                <p>Creatinine, urea, uric acid explained</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-vial"></i>
+                <h3>Thyroid (TSH/T3/T4)</h3>
+                <p>Hypothyroid, hyperthyroid results explained</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Diabetes (HbA1c/Sugar)</h3>
+                <p>Fasting glucose, post-meal, HbA1c values</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-hospital"></i>
+                <h3>Discharge Summary</h3>
+                <p>What happened, diagnosis & next steps</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-baby"></i>
+                <h3>Pregnancy Reports</h3>
+                <p>Ultrasound, anomaly scan, prenatal tests</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Vitamin & Minerals</h3>
+                <p>Vitamin D, B12, iron, calcium deficiencies</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-flask"></i>
+                <h3>Urine Analysis</h3>
+                <p>Complete urine exam, protein, glucose, cells</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-dna"></i>
+                <h3>Hormone Tests</h3>
+                <p>Testosterone, estrogen, FSH, LH, prolactin</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-wave-square"></i>
+                <h3>ECG Report</h3>
+                <p>Heart rhythm findings in simple terms</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-virus"></i>
+                <h3>Infection Markers</h3>
+                <p>CRP, ESR, procalcitonin — inflammation explained</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-allergies"></i>
+                <h3>Allergy & COVID Tests</h3>
+                <p>IgE allergy panels, rapid tests explained</p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-microscope"></i>
+                <h3>Cancer Markers</h3>
+                <p>PSA, CA-125, CEA values explained <span style="color:#ef4444;font-size:0.75rem;font-weight:700;">⚠️ Always see doctor</span></p>
+            </div>
+            <div class="report-card">
+                <i class="fas fa-heart"></i>
+                <h3>Cardiac Markers</h3>
+                <p>Troponin, CK-MB explained <span style="color:#ef4444;font-size:0.75rem;font-weight:700;">⚠️ Emergency — see doctor now</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WHY THIS WORKS -->
+<section style="background:#f8fafc; padding:4rem 2rem;">
+    <div class="container" style="max-width:960px;">
+        <h2 class="section-title">But Wait — Is This Just for "Educational Purposes"?</h2>
+        <p class="section-sub">Yes. And so is WebMD, 1mg, Healthline, and Mayo Clinic. Here's what that actually means for you.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:2rem;">
+
+            <div style="background:white;border-radius:18px;padding:1.8rem;border:2px solid #e2e8f0;">
+                <div style="font-size:2rem;margin-bottom:0.7rem;">🤔</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a;">What "educational" means</h3>
+                <p style="font-size:0.88rem;color:#64748b;line-height:1.6;">It means we explain what your numbers mean — we don't tell you what disease you have or what medicine to take. Your doctor does that. We help you understand what's already written in your report.</p>
+            </div>
+
+            <div style="background:white;border-radius:18px;padding:1.8rem;border:2px solid #e2e8f0;">
+                <div style="font-size:2rem;margin-bottom:0.7rem;">👨‍⚕️</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a;">Think of us as a knowledgeable friend</h3>
+                <p style="font-size:0.88rem;color:#64748b;line-height:1.6;">If your friend studied medicine, they'd explain your report over tea. They'd say "your haemoglobin is low — that means mild anaemia, ask about iron supplements." That's exactly what we do. Over WhatsApp.</p>
+            </div>
+
+            <div style="background:white;border-radius:18px;padding:1.8rem;border:2px solid #e2e8f0;">
+                <div style="font-size:2rem;margin-bottom:0.7rem;">💡</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a;">What you actually get</h3>
+                <p style="font-size:0.88rem;color:#64748b;line-height:1.6;">You understand your own health. You walk into your next doctor appointment knowing exactly what to ask. You don't panic because you know which values are truly serious and which are fine. That clarity has real value.</p>
+            </div>
+
+            <div style="background:white;border-radius:18px;padding:1.8rem;border:2px solid #e2e8f0;">
+                <div style="font-size:2rem;margin-bottom:0.7rem;">🌍</div>
+                <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.5rem;color:#0f172a;">Who uses services like this?</h3>
+                <p style="font-size:0.88rem;color:#64748b;line-height:1.6;">WebMD has 180 million users. 1mg is worth ₹4,500 crore. Healthline is valued at $175M. They all have the same disclaimer. People pay because <strong>understanding your health is valuable</strong> — regardless of what the legal text says.</p>
+            </div>
+
+        </div>
+
+        <div style="background:linear-gradient(135deg,#eff6ff,#f0fdf4);border-radius:18px;padding:1.8rem 2rem;margin-top:2rem;text-align:center;border:2px solid #bfdbfe;">
+            <p style="font-size:1.05rem;font-weight:700;color:#1e40af;margin-bottom:0.4rem;">MedSimple AI does one thing, and does it perfectly:</p>
+            <p style="font-size:1rem;color:#334155;">"Your medical report — every value — explained simply, in your language, in 5 minutes. So you understand your own health."</p>
+            <p style="font-size:0.85rem;color:#64748b;margin-top:0.8rem;">Your doctor diagnoses. We explain. Together, you make better decisions.</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-bg" id="pricing">
+    <div class="container">
+        <h2 class="section-title">Simple, Affordable Pricing</h2>
+        <p class="section-sub">No hidden fees. No free trials. Pay what works for you — and get instant value.</p>
+
+        <div class="pricing-cards">
+
+            <!-- Single Report -->
+            <div class="pricing-card">
+                <div class="plan-name">Single Report</div>
+                <div class="plan-price">₹49</div>
+                <div class="plan-usd">/ $1.50 per report</div>
+                <div class="plan-desc">Perfect for first-timers. Low risk, immediate value.</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> 1 report fully explained</li>
+                    <li><i class="fas fa-check-circle"></i> Complete value breakdown</li>
+                    <li><i class="fas fa-check-circle"></i> Delivered in under 5 min</li>
+                    <li><i class="fas fa-check-circle"></i> Doctor questions included</li>
+                    <li><i class="fas fa-check-circle"></i> Via WhatsApp</li>
+                </ul>
+                <a href="REPLACE_WITH_RAZORPAY_LINK_49" class="btn-plan btn-outline" target="_blank">
+                    Pay ₹49 &nbsp;·&nbsp; Get Started
+                </a>
+            </div>
+
+            <!-- Monthly Unlimited -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">⭐ MOST POPULAR</div>
+                <div class="plan-name">Monthly Unlimited</div>
+                <div class="plan-price">₹199</div>
+                <div class="plan-usd">/ $5 per month</div>
+                <div class="plan-desc">Best for diabetics, BP patients & chronic conditions who get regular reports.</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> Unlimited reports / month</li>
+                    <li><i class="fas fa-check-circle"></i> Priority 3-min response</li>
+                    <li><i class="fas fa-check-circle"></i> Full detailed breakdown</li>
+                    <li><i class="fas fa-check-circle"></i> Monthly health summary</li>
+                    <li><i class="fas fa-check-circle"></i> Track trends over time</li>
+                </ul>
+                <a href="REPLACE_WITH_RAZORPAY_LINK_199" class="btn-plan btn-filled" target="_blank">
+                    Pay ₹199 &nbsp;·&nbsp; Start Now
+                </a>
+            </div>
+
+            <!-- Family Pack -->
+            <div class="pricing-card">
+                <div class="plan-name">Family Pack</div>
+                <div class="plan-price">₹399</div>
+                <div class="plan-usd">/ $8 per month</div>
+                <div class="plan-desc">Ideal for families with elderly parents who need regular health monitoring.</div>
+                <ul class="plan-features">
+                    <li><i class="fas fa-check-circle"></i> Up to 5 family members</li>
+                    <li><i class="fas fa-check-circle"></i> Unlimited reports / month</li>
+                    <li><i class="fas fa-check-circle"></i> Priority 3-min response</li>
+                    <li><i class="fas fa-check-circle"></i> English, Hindi & Arabic support</li>
+                    <li><i class="fas fa-check-circle"></i> WhatsApp group support</li>
+                </ul>
+                <a href="REPLACE_WITH_RAZORPAY_LINK_399" class="btn-plan btn-outline" target="_blank">
+                    Pay ₹399 &nbsp;·&nbsp; Protect Family
+                </a>
+            </div>
+
+        </div>
+
+        <div style="text-align:center; margin-top:2rem;">
+            <p id="payment-note" style="color:var(--gray); font-size:0.88rem; margin-bottom:0.8rem;">
+                🇮🇳 India — Pay via UPI / Debit Card / Net Banking &nbsp;|&nbsp; 🌍 International — Pay via PayPal (no account needed)
+            </p>
+            <p style="color:var(--gray); font-size:0.82rem;">
+                💳 No PayPal account? No problem — click "Pay with Debit or Credit Card" on the PayPal page. Just enter your card. Done.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- LANGUAGE SECTION -->
+<section class="lang-section">
+    <div class="container">
+        <h2 class="section-title">Available in 8 Languages</h2>
+        <p class="section-sub">Get your report explained in your native language. Just tell us your preference on WhatsApp — we do the rest.</p>
+        <div class="lang-cards">
+            <div class="lang-card">
+                <div class="lang-num">1️⃣</div>
+                <div class="lang-flag">🇬🇧</div>
+                <div class="lang-name">English</div>
+                <div class="lang-native">English</div>
+                <div class="lang-reach">1.5 billion speakers worldwide</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">2️⃣</div>
+                <div class="lang-flag">🇮🇳</div>
+                <div class="lang-name">Hindi</div>
+                <div class="lang-native">हिंदी में समझें</div>
+                <div class="lang-reach">500M+ speakers · India</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">3️⃣</div>
+                <div class="lang-flag">🇦🇪</div>
+                <div class="lang-name">Arabic</div>
+                <div class="lang-native">اشرح تقريري بالعربية</div>
+                <div class="lang-reach">400M+ speakers · Middle East</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">4️⃣</div>
+                <div class="lang-flag">🇪🇸</div>
+                <div class="lang-name">Spanish</div>
+                <div class="lang-native">Explícame en español</div>
+                <div class="lang-reach">500M+ speakers · Spain & Latin America</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">5️⃣</div>
+                <div class="lang-flag">🇫🇷</div>
+                <div class="lang-name">French</div>
+                <div class="lang-native">Expliquez en français</div>
+                <div class="lang-reach">300M+ speakers · France & Africa</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">6️⃣</div>
+                <div class="lang-flag">🇩🇪</div>
+                <div class="lang-name">German</div>
+                <div class="lang-native">Auf Deutsch erklären</div>
+                <div class="lang-reach">100M+ speakers · Germany, Austria</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">7️⃣</div>
+                <div class="lang-flag">🇷🇺</div>
+                <div class="lang-name">Russian</div>
+                <div class="lang-native">Объясните по-русски</div>
+                <div class="lang-reach">150M+ speakers · Russia & CIS</div>
+            </div>
+            <div class="lang-card">
+                <div class="lang-num">8️⃣</div>
+                <div class="lang-flag">🇮🇹</div>
+                <div class="lang-name">Italian</div>
+                <div class="lang-native">Spiegami in italiano</div>
+                <div class="lang-reach">65M+ speakers · Italy</div>
+            </div>
+        </div>
+        <p style="text-align:center; color:rgba(255,255,255,0.6); margin-top:2.5rem; font-size:0.88rem; line-height:2;">
+            On WhatsApp, simply reply with your number:<br>
+            <strong style="color:#fcd34d;">1 English &nbsp;·&nbsp; 2 हिंदी &nbsp;·&nbsp; 3 العربية &nbsp;·&nbsp; 4 Español &nbsp;·&nbsp; 5 Français &nbsp;·&nbsp; 6 Deutsch &nbsp;·&nbsp; 7 Русский &nbsp;·&nbsp; 8 Italiano</strong>
+        </p>
+    </div>
+</section>
+
+<!-- COUNTRIES -->
+<section style="background: var(--light);">
+    <div class="container">
+        <h2 class="section-title">Serving Patients Worldwide</h2>
+        <p class="section-sub">If you have WhatsApp, we can help — no matter where you are.</p>
+        <div class="countries">
+            <div class="ctag">🇮🇳 India</div>
+            <div class="ctag">🇦🇪 UAE</div>
+            <div class="ctag">🇸🇦 Saudi Arabia</div>
+            <div class="ctag">🇶🇦 Qatar</div>
+            <div class="ctag">🇰🇼 Kuwait</div>
+            <div class="ctag">🇧🇭 Bahrain</div>
+            <div class="ctag">🇴🇲 Oman</div>
+            <div class="ctag">🇵🇰 Pakistan</div>
+            <div class="ctag">🇧🇩 Bangladesh</div>
+            <div class="ctag">🇳🇬 Nigeria</div>
+            <div class="ctag">🇰🇪 Kenya</div>
+            <div class="ctag">🇬🇧 UK</div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section>
+    <div class="container" style="max-width:740px;">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-sub">Everything you need to know.</p>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Is my medical report safe and private? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Your report is processed securely and permanently deleted after your explanation is sent. We never store, share, or sell your medical data. Your privacy is our top priority.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                How long does it take to get my explanation? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Most explanations are delivered within 3–5 minutes of sending your report. You'll receive a confirmation message as soon as your report is received.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                What if my report is in Hindi or Arabic? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">We can process reports in English, Hindi, and Arabic. Explanations are sent back in clear English. Hindi explanations are available on the Family Pack plan.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                How do I pay if I'm outside India? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">International customers (UAE, Middle East, UK, Europe, etc.) pay via PayPal. <strong>No PayPal account needed.</strong> Click the link → select "Pay with Debit or Credit Card" → enter your card → done in 60 seconds. After payment you'll immediately receive our WhatsApp number.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Is this a replacement for my doctor? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">No. MedSimple AI helps you understand your report so you can have a better conversation with your doctor. It is for educational purposes only and never replaces professional medical advice or diagnosis.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">
+                Can I use Family Pack for multiple WhatsApp numbers? <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-a">Yes. The Family Pack covers up to 5 family members, each on their own WhatsApp number. You can send reports for your parents, spouse, or children — all covered under one plan.</div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+    <h2>Your Report Is Already There. You Just Can't Read It.</h2>
+    <p>In 5 minutes and ₹49, you'll understand every single value — in your language. No confusion. No panic. Just clarity.</p>
+    <a href="#pricing" class="btn-white">Understand My Report Now →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-logo">Med<span>Simple</span> AI</div>
+    <p style="margin-bottom: 0.5rem;">Making medical reports simple for everyone, everywhere.</p>
+    <p style="font-size: 0.85rem; opacity: 0.6;">India · UAE · Saudi Arabia · Qatar · Kuwait · Bahrain · Oman · Pakistan · Bangladesh · UK · Germany · France · Spain · Italy · Nigeria · Kenya · Canada · Australia</p>
+    <div class="disclaimer">
+        <strong>ℹ️ What MedSimple AI is:</strong> We help you <em>understand</em> your reports — just like WebMD, 1mg, or Healthline do. We explain what your values mean, which are outside normal range, and what questions to ask your doctor. We do not diagnose, prescribe, or replace your doctor. Your report, explained simply — that's it.
+    </div>
+    <p style="margin-top: 1.5rem; font-size: 0.82rem; opacity: 0.45;">
+        © 2026 MedSimple AI · All rights reserved · Privacy Policy · Terms of Service
+    </p>
+</footer>
+
+<!-- FLOATING WHATSAPP BUTTON -->
+<a href="https://wa.me/YOUR_WHATSAPP_NUMBER" class="wa-float" target="_blank" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+    // ═══════════════════════════════════
+    // WHATSAPP DEMO — 4 REPORT TYPES
+    // ═══════════════════════════════════
+
+    const INTRO = [
+        { delay: 400,  type: 'user', text: 'Hi! I just paid for MedSimple AI.\nPlease activate my account.' },
+        { delay: 1500, type: 'typing' },
+        { delay: 2800, type: 'bot',  text: '👋 Welcome to <b>MedSimple AI</b>!\n\nChoose your language:\n1️⃣ English &nbsp;2️⃣ हिंदी\n3️⃣ العربية &nbsp;4️⃣ Español\n5️⃣ Français &nbsp;6️⃣ Deutsch\n7️⃣ Русский &nbsp;8️⃣ Italiano' },
+        { delay: 4200, type: 'user', text: '1' },
+        { delay: 5000, type: 'typing' },
+        { delay: 6000, type: 'bot',  text: '✅ <b>English selected!</b>\n\nQuick profile (for accurate ranges):\n1. Age? &nbsp; 2. M / F? &nbsp; 3. Known conditions?' },
+    ];
+
+    const demoScripts = {
+        blood: [
+            ...INTRO,
+            { delay: 7800, type: 'user', text: '52, M, high BP' },
+            { delay: 8600, type: 'typing' },
+            { delay: 9600, type: 'bot',  text: '✅ Got it! Please send your <b>Blood Test report</b> photo or PDF now.' },
+            { delay: 11200,type: 'photo', file: 'cbc_report.jpg' },
+            { delay: 12200,type: 'typing', label: '🔬 Analyzing CBC report…' },
+            { delay: 15500,type: 'bot',  text: '🔬 <b>COMPLETE BLOOD COUNT (CBC)</b>\n\n📊 <b>YOUR RESULTS</b>\n\n<span class="msg-red">• Hemoglobin: 10.8 g/dL</span> | Normal: 13.5–17.5 | 🔴 Low\n  → Your blood is carrying less oxygen than normal. This is mild anaemia.\n\n<span class="msg-green">• WBC: 7,200 /µL</span> | Normal: 4,000–11,000 | ✅ Normal\n  → White blood cells are fine. No sign of infection.\n\n<span class="msg-green">• Platelets: 2,10,000 /µL</span> | Normal: 1,50,000–4,00,000 | ✅ Normal\n  → Clotting cells are healthy.\n\n<span class="msg-orange">• MCV: 72 fL</span> | Normal: 80–100 | ⚠️ Low\n  → Red cells are smaller than normal — often caused by iron deficiency.\n\n<span class="msg-green">• Neutrophils: 62%</span> | Normal: 40–70% | ✅ Normal\n  → Infection-fighting cells are in good range.\n\n<span class="msg-green">• Lymphocytes: 28%</span> | Normal: 20–40% | ✅ Normal\n  → Immune cells are normal.' },
+            { delay: 17000,type: 'bot',  text: '⚠️ <b>WATCH OUT</b>\nYour haemoglobin (10.8) and MCV (72) are both low. This pattern usually means iron-deficiency anaemia. It can cause tiredness, breathlessness, and pale skin. With your high BP, this needs doctor attention.\n\n❓ <b>ASK YOUR DOCTOR</b>\n1. Do I need iron supplements or a serum ferritin test?\n2. Is this anaemia affecting my blood pressure?\n3. Should I repeat this test in 4–6 weeks?\n\n📋 <b>NEXT STEPS</b>\nSee your doctor within 1 week. Eat iron-rich foods (spinach, lentils, red meat). Avoid tea/coffee right after meals — they block iron absorption.\n\n─────────────\n⚠️ Educational only. Not medical advice. Always consult your doctor.' },
+        ],
+        thyroid: [
+            ...INTRO,
+            { delay: 7800, type: 'user', text: '38, F, none' },
+            { delay: 8600, type: 'typing' },
+            { delay: 9600, type: 'bot',  text: '✅ Got it! Please send your <b>Thyroid report</b> photo or PDF now.' },
+            { delay: 11200,type: 'photo', file: 'thyroid_report.jpg' },
+            { delay: 12200,type: 'typing', label: '🦋 Analyzing Thyroid report…' },
+            { delay: 15500,type: 'bot',  text: '🦋 <b>THYROID FUNCTION TEST (TFT)</b>\n\n📊 <b>YOUR RESULTS</b>\n\n<span class="msg-red">• TSH: 9.8 mIU/L</span> | Normal: 0.4–4.0 | 🔴 High\n  → Your brain is sending extra signals to your thyroid. Sign of underactive thyroid.\n\n<span class="msg-red">• T3 (Total): 65 ng/dL</span> | Normal: 80–200 | 🔴 Low\n  → Active thyroid hormone is below normal.\n\n<span class="msg-orange">• T4 (Total): 5.8 µg/dL</span> | Normal: 5.1–14.1 | ⚠️ Borderline Low\n  → Thyroid hormone storage level is just at the lower edge.\n\n<span class="msg-green">• Anti-TPO Antibody: 12 IU/mL</span> | Normal: &lt;35 | ✅ Normal\n  → No thyroid antibodies detected. Not autoimmune.' },
+            { delay: 17000,type: 'bot',  text: '⚠️ <b>WATCH OUT</b>\nYour TSH is 9.8 (very high) and T3 is low — this is <b>Hypothyroidism</b> (underactive thyroid). This can cause weight gain, fatigue, hair loss, feeling cold, and slow heartbeat. The good news: it is very treatable with a simple daily tablet.\n\n❓ <b>ASK YOUR DOCTOR</b>\n1. Should I start Levothyroxine medication?\n2. What dose is right for my age and weight?\n3. How soon should I retest after starting treatment?\n\n📋 <b>NEXT STEPS</b>\nSee your doctor within 1 week. Do not ignore — untreated hypothyroidism worsens over time. Repeat test in 6–8 weeks after starting treatment.\n\n─────────────\n⚠️ Educational only. Not medical advice. Always consult your doctor.' },
+        ],
+        diabetes: [
+            ...INTRO,
+            { delay: 7800, type: 'user', text: '61, M, diabetes for 5 years' },
+            { delay: 8600, type: 'typing' },
+            { delay: 9600, type: 'bot',  text: '✅ Got it! Please send y
