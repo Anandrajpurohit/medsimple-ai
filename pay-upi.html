@@ -22,6 +22,7 @@
 
   .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
 
+  /* QR Section (desktop) */
   .qr-section { display: block; }
   .qr-section h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 1rem; }
   .qr-box { background: #f8fffe; border: 2px solid #e6faf4; border-radius: 16px; padding: 1rem; display: inline-block; margin-bottom: 1rem; }
@@ -29,14 +30,17 @@
   .upi-apps { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin: 0.75rem 0; }
   .upi-app { background: #f0fdf9; border: 1px solid #c6f0e3; border-radius: 8px; padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 600; color: var(--dark); }
 
+  /* Copy UPI ID */
   .upi-id-box { background: #f8f9ff; border: 1.5px dashed #c0c8e0; border-radius: 12px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; margin: 1rem 0; cursor: pointer; }
   .upi-id-box span { font-size: 0.9rem; font-weight: 600; color: var(--dark); word-break: break-all; text-align: left; }
   .copy-btn { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; margin-left: 0.5rem; flex-shrink: 0; }
   .copied-msg { color: var(--primary); font-size: 0.8rem; font-weight: 600; height: 1.2rem; margin-top: 0.25rem; }
 
+  /* Mobile Pay Button */
   .btn-upi { display: block; width: 100%; background: var(--primary); color: white; font-size: 1.05rem; font-weight: 700; padding: 1rem; border-radius: 50px; text-decoration: none; margin-top: 1rem; border: none; cursor: pointer; }
   .btn-upi:hover { background: #009e76; }
 
+  /* Steps */
   .steps { text-align: left; background: #f8fffe; border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.2rem; }
   .steps h4 { font-size: 0.85rem; font-weight: 700; color: var(--dark); margin-bottom: 0.6rem; }
   .steps ol { padding-left: 1.2rem; color: #555; font-size: 0.85rem; line-height: 1.8; }
@@ -47,6 +51,7 @@
   .back-link { margin-top: 1.5rem; font-size: 0.85rem; color: #888; }
   .back-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
 
+  /* Mobile: hide QR, show button */
   @media (max-width: 600px) {
     .qr-section { display: none; }
     .mobile-section { display: block !important; }
@@ -67,6 +72,7 @@
 
   <hr class="divider">
 
+  <!-- DESKTOP: Show QR -->
   <div class="qr-section">
     <h3>📱 Scan QR with any UPI app</h3>
     <div class="qr-box">
@@ -87,6 +93,7 @@
     <div class="copied-msg" id="copy-msg"></div>
   </div>
 
+  <!-- MOBILE: Deep link button -->
   <div class="mobile-section">
     <h3>Pay with UPI App</h3>
     <p>Tap below — your UPI app opens with ₹<span id="mobile-amount">49</span> pre-filled</p>
@@ -97,11 +104,12 @@
     </div>
   </div>
 
+  <!-- Steps -->
   <div class="steps">
     <h4>After paying:</h4>
     <ol>
       <li>Take a screenshot of your payment confirmation</li>
-      <li>Send it to our WhatsApp → <a href="https://wa.me/YOUR_WHATSAPP_NUMBER?text=Hi!%20I%20just%20paid%20for%20MedSimple%20AI.%20Here's%20my%20screenshot." style="color:var(--primary);font-weight:600">Click here to WhatsApp us</a></li>
+      <li>Send it to our WhatsApp → <a href="https://wa.me/917732935936?text=Hi!%20I%20just%20paid%20for%20MedSimple%20AI.%20Here's%20my%20screenshot." style="color:var(--primary);font-weight:600">Click here to WhatsApp us</a></li>
       <li>We'll activate your account within minutes</li>
       <li>Then send your medical report — get explanation in your language!</li>
     </ol>
@@ -135,9 +143,11 @@
   document.getElementById('mobile-amount').textContent = plan.amount;
   document.getElementById('upi-btn-amount').textContent = plan.amount;
 
+  // UPI deep link
   const upiLink = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.amount}&cu=INR&tn=${UPI_NAME}-${plan.note}`;
   document.getElementById('upi-link').href = upiLink;
 
+  // QR code via free API
   const qrData = encodeURIComponent(upiLink);
   document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&bgcolor=f8fffe&color=00B386&qzone=1`;
 
@@ -147,6 +157,7 @@
       document.getElementById('copy-msg').textContent = '✅ UPI ID copied!';
       setTimeout(() => document.getElementById('copy-msg').textContent = '', 2500);
     }).catch(() => {
+      // Fallback
       const el = document.createElement('textarea');
       el.value = UPI_ID;
       document.body.appendChild(el);
