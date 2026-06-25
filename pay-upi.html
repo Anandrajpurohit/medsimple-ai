@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pay via UPI – MedSimple AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --primary: #00B386; --dark: #1a1a2e; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #f0fdf9; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; }
+
+  .logo { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-bottom: 1.5rem; text-align: center; }
+  .logo span { color: var(--dark); }
+
+  .card { background: white; border-radius: 24px; padding: 2rem; max-width: 420px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.10); text-align: center; }
+
+  .plan-badge { display: inline-block; background: #e6faf4; color: var(--primary); font-size: 0.8rem; font-weight: 700; padding: 0.3rem 1rem; border-radius: 50px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .amount { font-size: 3rem; font-weight: 800; color: var(--dark); margin: 0.5rem 0; }
+  .amount span { font-size: 1.5rem; font-weight: 600; color: #666; }
+
+  .divider { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
+
+  .qr-section { display: block; }
+  .qr-section h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 1rem; }
+  .qr-box { background: #f8fffe; border: 2px solid #e6faf4; border-radius: 16px; padding: 1rem; display: inline-block; margin-bottom: 1rem; }
+  .qr-box img { width: 200px; height: 200px; display: block; }
+  .upi-apps { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin: 0.75rem 0; }
+  .upi-app { background: #f0fdf9; border: 1px solid #c6f0e3; border-radius: 8px; padding: 0.35rem 0.75rem; font-size: 0.78rem; font-weight: 600; color: var(--dark); }
+
+  .upi-id-box { background: #f8f9ff; border: 1.5px dashed #c0c8e0; border-radius: 12px; padding: 0.75rem 1rem; display: flex; align-items: center; justify-content: space-between; margin: 1rem 0; cursor: pointer; }
+  .upi-id-box span { font-size: 0.9rem; font-weight: 600; color: var(--dark); word-break: break-all; text-align: left; }
+  .copy-btn { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; margin-left: 0.5rem; flex-shrink: 0; }
+  .copied-msg { color: var(--primary); font-size: 0.8rem; font-weight: 600; height: 1.2rem; margin-top: 0.25rem; }
+
+  .btn-upi { display: block; width: 100%; background: var(--primary); color: white; font-size: 1.05rem; font-weight: 700; padding: 1rem; border-radius: 50px; text-decoration: none; margin-top: 1rem; border: none; cursor: pointer; }
+  .btn-upi:hover { background: #009e76; }
+
+  .steps { text-align: left; background: #f8fffe; border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1.2rem; }
+  .steps h4 { font-size: 0.85rem; font-weight: 700; color: var(--dark); margin-bottom: 0.6rem; }
+  .steps ol { padding-left: 1.2rem; color: #555; font-size: 0.85rem; line-height: 1.8; }
+
+  .after-payment { background: #fff9e6; border: 1px solid #ffe082; border-radius: 12px; padding: 0.9rem 1.1rem; margin-top: 1.2rem; font-size: 0.85rem; color: #6b5300; line-height: 1.6; }
+  .after-payment strong { display: block; margin-bottom: 0.25rem; color: #5a4200; }
+
+  .back-link { margin-top: 1.5rem; font-size: 0.85rem; color: #888; }
+  .back-link a { color: var(--primary); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .qr-section { display: none; }
+    .mobile-section { display: block !important; }
+  }
+  .mobile-section { display: none; }
+  .mobile-section h3 { font-size: 1rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem; }
+  .mobile-section p { font-size: 0.85rem; color: #666; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+
+<div class="logo">MedSimple <span>AI</span></div>
+
+<div class="card">
+  <div class="plan-badge" id="plan-label">Single Report</div>
+  <div class="amount">₹<span id="amount-display">49</span></div>
+  <div style="color:#888;font-size:0.85rem;margin-bottom:0.5rem" id="plan-desc">1 report explanation via WhatsApp</div>
+
+  <hr class="divider">
+
+  <div class="qr-section">
+    <h3>📱 Scan QR with any UPI app</h3>
+    <div class="qr-box">
+      <img id="qr-img" src="" alt="UPI QR Code">
+    </div>
+    <div class="upi-apps">
+      <span class="upi-app">📱 GPay</span>
+      <span class="upi-app">📱 PhonePe</span>
+      <span class="upi-app">📱 Paytm</span>
+      <span class="upi-app">📱 BHIM</span>
+      <span class="upi-app">📱 Any UPI</span>
+    </div>
+    <div style="font-size:0.8rem;color:#888;margin-bottom:0.5rem">or pay directly to this UPI ID:</div>
+    <div class="upi-id-box" onclick="copyUPI()">
+      <span>anandrajpurohit1993@okhdfcbank</span>
+      <button class="copy-btn" onclick="copyUPI(event)">Copy</button>
+    </div>
+    <div class="copied-msg" id="copy-msg"></div>
+  </div>
+
+  <div class="mobile-section">
+    <h3>Pay with UPI App</h3>
+    <p>Tap below — your UPI app opens with ₹<span id="mobile-amount">49</span> pre-filled</p>
+    <a class="btn-upi" id="upi-link" href="#">Pay ₹<span id="upi-btn-amount">49</span> via UPI App</a>
+    <div style="font-size:0.8rem;color:#888;margin-top:0.75rem">Opens GPay, PhonePe, Paytm, BHIM & all UPI apps</div>
+    <div style="margin-top:1rem;font-size:0.8rem;color:#666">Or pay manually to UPI ID:<br>
+      <strong style="color:var(--dark)">anandrajpurohit1993@okhdfcbank</strong>
+    </div>
+  </div>
+
+  <div class="steps">
+    <h4>After paying:</h4>
+    <ol>
+      <li>Take a screenshot of your payment confirmation</li>
+      <li>Send it to our WhatsApp → <a href="https://wa.me/YOUR_WHATSAPP_NUMBER?text=Hi!%20I%20just%20paid%20for%20MedSimple%20AI.%20Here's%20my%20screenshot." style="color:var(--primary);font-weight:600">Click here to WhatsApp us</a></li>
+      <li>We'll activate your account within minutes</li>
+      <li>Then send your medical report — get explanation in your language!</li>
+    </ol>
+  </div>
+
+  <div class="after-payment">
+    <strong>⏰ Activation is fast:</strong>
+    Monday–Sunday, 8am–11pm IST. If you pay outside these hours, your account activates when we're back. You'll get a WhatsApp confirmation message.
+  </div>
+</div>
+
+<div class="back-link"><a href="index.html">← Back to MedSimple AI</a></div>
+
+<script>
+  const UPI_ID = 'anandrajpurohit1993@okhdfcbank';
+  const UPI_NAME = 'MedSimpleAI';
+
+  const plans = {
+    single:  { label: 'Single Report', amount: 49,  desc: '1 report explanation via WhatsApp', note: 'SingleReport' },
+    monthly: { label: 'Monthly Plan',  amount: 199, desc: 'Unlimited reports for 1 month',     note: 'Monthly' },
+    family:  { label: 'Family Pack',   amount: 399, desc: 'Unlimited reports for whole family (1 month)', note: 'FamilyPack' }
+  };
+
+  const params = new URLSearchParams(window.location.search);
+  const planKey = params.get('plan') || 'single';
+  const plan = plans[planKey] || plans.single;
+
+  document.getElementById('plan-label').textContent = plan.label;
+  document.getElementById('amount-display').textContent = plan.amount;
+  document.getElementById('plan-desc').textContent = plan.desc;
+  document.getElementById('mobile-amount').textContent = plan.amount;
+  document.getElementById('upi-btn-amount').textContent = plan.amount;
+
+  const upiLink = `upi://pay?pa=${UPI_ID}&pn=${UPI_NAME}&am=${plan.amount}&cu=INR&tn=${UPI_NAME}-${plan.note}`;
+  document.getElementById('upi-link').href = upiLink;
+
+  const qrData = encodeURIComponent(upiLink);
+  document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}&bgcolor=f8fffe&color=00B386&qzone=1`;
+
+  function copyUPI(e) {
+    if (e) e.stopPropagation();
+    navigator.clipboard.writeText(UPI_ID).then(() => {
+      document.getElementById('copy-msg').textContent = '✅ UPI ID copied!';
+      setTimeout(() => document.getElementById('copy-msg').textContent = '', 2500);
+    }).catch(() => {
+      const el = document.createElement('textarea');
+      el.value = UPI_ID;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      document.getElementById('copy-msg').textContent = '✅ UPI ID copied!';
+      setTimeout(() => document.getElementById('copy-msg').textContent = '', 2500);
+    });
+  }
+</script>
+</body>
+</html>
